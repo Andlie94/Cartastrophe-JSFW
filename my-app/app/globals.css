@@ -4,12 +4,19 @@
   --background: #F5F3EE;
   --foreground: #171717;
   --textcolor: #1A1A1A;
+  --textcolor2: #A7A586;
+  --textcolor3: #B0B0B0;
   --font-playfair: "Playfair Display", serif;
   --font-inter-sans: "inter", sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair);
 }
+
+h2, h3, h4, h5, h6 {
+  color: var(--textcolor2);
+}
+
 p, li, a, span, div {
   font-family: var(--font-inter-sans);
 }
