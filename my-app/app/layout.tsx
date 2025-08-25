@@ -24,6 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>My App</title>
+      </head>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }
