@@ -22,9 +22,9 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="text-white">
+    <header className="">
 
-      <nav className="flex justify-center space-x-8 p-4 text-black">
+      <nav className="flex justify-center space-x-8 p-4 text-custom">
         <Link href="/" className="hover:underline">About me</Link>
         <Link href="/contact" className="hover:underline">Contact</Link>
 
