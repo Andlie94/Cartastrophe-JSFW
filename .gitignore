@@ -1,1 +1,5 @@
 node_modules
+.next
+.my-app/.next
+.DS_Store
+.next-env.d.ts
