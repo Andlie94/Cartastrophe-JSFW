@@ -1,1 +1,12 @@
-node_modules
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+my-app/.next/
+
+# Mac system files
+.DS_Store
+
+# TypeScript environment file
+next-env.d.ts
