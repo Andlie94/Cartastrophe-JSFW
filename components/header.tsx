@@ -1,22 +1,74 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import Link from "next/link";
+import { useState, useRef } from "react";
+import { FaShoppingCart, FaSearch } from "react-icons/fa";
 
+export const SearchButton = () => {
+  const [showInput, setShowInput] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-export default function Header() {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const handleClick = () => {
+    setShowInput(!showInput);
+    if (!showInput) {
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  };
 
   return (
-    <header className="">
+    <div className="relative">
+      {!showInput && (
+        <button
+          onClick={handleClick}
+          className="p-2 rounded hover:bg-gray-200"
+        >
+          <FaSearch size={20} />
+        </button>
+      )}
 
-      <nav className="flex justify-center space-x-8 p-4 text-custom">
-        <Link href="/" className="hover:underline">Home</Link>
-        <hr className="w-px h-6 bg-blue-900" />
-        <Link href="/cart" className="hover:underline">Cart</Link>  {/* se om vi har bruk for denne */}
-        <hr className="w-px h-6 bg-blue-900" />
-        <Link href="/contact" className="hover:underline">Contact</Link>
+      {showInput && (
+        <div className="flex items-center space-x-2">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Search..."
+            className="p-2 border rounded shadow-md"
+          />
+          <button
+            onClick={handleClick}
+            className="p-2 rounded hover:bg-gray-200"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function Header() {
+  return (
+    <header>
+      <nav className="flex items-center p-4 text-custom">
+        <div className="flex-1 flex flex-col items-start">
+          <Link href="/">
+            <h1 className="text-3xl">Chartastrophe</h1>
+          </Link>
+          <p className="text-sm">Oops, I bought it again</p>
+        </div>
+
+        <div className="flex space-x-8 mt-4">
+          <Link href="/" className="hover:underline">Home</Link>
+          <hr className="w-px h-6 bg-blue-900" />
+          <Link href="/contact" className="hover:underline">Contact</Link>
+          <hr className="w-px h-6 bg-blue-900" />
+          <Link href="/about" className="hover:underline">About</Link>
+        </div>
+
+        <div className="flex-1 flex justify-end items-center mt-2 space-x-4">
+          <SearchButton/>
+          <FaShoppingCart size={28} color="#000000" />
+        </div>
       </nav>
     </header>
   );
