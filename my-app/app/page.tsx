@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Button from "./components/Button"; 
+import Button from "../components/Button"; 
 
 export default function Home() {
   const handleClick = () => {
