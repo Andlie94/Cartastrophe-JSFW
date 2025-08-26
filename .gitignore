@@ -1,5 +1,12 @@
-node_modules
-.next
-.my-app/.next
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+my-app/.next/
+
+# Mac system files
 .DS_Store
-.next-env.d.ts
+
+# TypeScript environment file
+next-env.d.ts
