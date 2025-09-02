@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import { useCart } from "../app/context/cartContext";
 
 export const SearchButton = () => {
   const [showInput, setShowInput] = useState(false);
@@ -18,10 +19,7 @@ export const SearchButton = () => {
   return (
     <div className="relative">
       {!showInput && (
-        <button
-          onClick={handleClick}
-          className="p-2 rounded hover:bg-gray-200"
-        >
+        <button onClick={handleClick} className="p-2 rounded hover:bg-gray-200">
           <FaSearch size={20} />
         </button>
       )}
@@ -47,27 +45,41 @@ export const SearchButton = () => {
 };
 
 export default function Header() {
+  const { toggleCart } = useCart();
+
   return (
     <header>
       <nav className="flex items-center p-4 text-custom">
         <div className="flex-1 flex flex-col items-start">
           <Link href="/">
-            <h1 className="text-3xl">Chartastrophe</h1>
+            <h1 className="text-3xl">Cartastrophe</h1>
           </Link>
           <p className="text-sm">Oops, I bought it again</p>
         </div>
 
         <div className="flex space-x-8 mt-4">
-          <Link href="/" className="hover:underline">Home</Link>
+          <Link href="/" className="hover:underline">
+            Home
+          </Link>
           <hr className="w-px h-6 bg-blue-900" />
-          <Link href="/contact" className="hover:underline">Contact</Link>
+          <Link href="/contact" className="hover:underline">
+            Contact
+          </Link>
           <hr className="w-px h-6 bg-blue-900" />
-          <Link href="/about" className="hover:underline">About</Link>
+          <Link href="/about" className="hover:underline">
+            About
+          </Link>
         </div>
 
         <div className="flex-1 flex justify-end items-center mt-2 space-x-4">
-          <SearchButton/>
-          <FaShoppingCart size={28} color="#000000" />
+          <SearchButton />
+          <Link
+            href="/cart"
+            className="p-2 rounded hover:bg-gray-200"
+            aria-label="Go to cart"
+          >
+            <FaShoppingCart size={28} color="#000000" />
+          </Link>
         </div>
       </nav>
     </header>
