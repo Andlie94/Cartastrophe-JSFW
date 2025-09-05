@@ -61,7 +61,7 @@ return (
         {products.map((product) => (
           <Link
             key={product.id}
-            href={`/Individual?id=${product.id}`}
+            href={`/individual?id=${product.id}`}
             className="rounded-2xl block"
           >
             <img
