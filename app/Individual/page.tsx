@@ -13,9 +13,9 @@ type Product = {
   image?: { url: string; alt: string };
 };
 
-export default function IndividualPage() {
+const IndividualPage: React.FC = () => {
   const search = useSearchParams();
-  const id = search.get("id") || "";
+  const id = search.get("id") || ""; 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,22 +24,41 @@ export default function IndividualPage() {
       setLoading(false);
       return;
     }
-    getProductById(id).then(setProduct).finally(() => setLoading(false));
+
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductById(id);
+        setProduct(data);
+      } catch (error) {
+        console.error("fail to load product from the API", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   if (loading) return <div>Laster…</div>;
   if (!id || !product) return <div>Fant ikke produkt</div>;
 
   return (
-    <main>
+    <main style={{ padding: "" }}>
       <h1>{product.title}</h1>
+
       {product.image?.url && (
-        <img src={product.image.url} alt={product.image?.alt || product.title} />
+        <img
+          src={product.image.url}
+          alt={product.image.alt || product.title}
+        />
       )}
+
       {product.description && <p>{product.description}</p>}
-      <p>Price: {product.price}</p>
-      <p>Discounted: {product.discountedPrice}</p>
-      <pre>{JSON.stringify(product, null, 2)}</pre>
+
+      <p>Price: {product.price} kr</p>
+      <p>Discounted price: {product.discountedPrice} kr</p>
     </main>
   );
-}
+};
+
+export default IndividualPage;
