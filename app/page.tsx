@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getProducts } from "../components/fetch";
 import Link from "next/link";
 import Image from "next/image";
+
 export type Product = {
   id: string;
   title: string;
@@ -18,6 +19,9 @@ export type Product = {
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [sortOrder, setSortOrder] = useState<"expensive" | "cheap" | "all">("all");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +32,19 @@ export default function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   if (loading) return <p>Laster produkter...</p>;
 
   function getDisplayPrice(product: Product) {
@@ -35,6 +52,18 @@ export default function Home() {
       return <span>On sale: ${product.discountedPrice.toFixed(2)}</span>;
     }
     return `$${product.price.toFixed(2)}`;
+  }
+
+  function sortProducts(products: Product[], order: "expensive" | "cheap" | "all") {
+    return [...products].sort((a, b) => {
+      if (order === "expensive") {
+        return b.price - a.price;
+      } else if (order === "cheap") {
+        return a.price - b.price;
+      } else {
+        return 0;
+      }
+    });
   }
 
   return (
@@ -53,15 +82,55 @@ export default function Home() {
         <p className="absolute text-[#C5C4A6] text-l top-25 left-8 md:top-40 md:left-70">
           Shop the latest products
         </p>
-        <button className="absolute top-35 left-17  md:top-50 md:left-77 bg-[#C5C4A6] text-[#4B4B4B] py-2 px-4 rounded shadow-lg hover:bg-[#B0AFA0] transition">
-          Add to Cart
-        </button>
+        <Link href="/about">
+          <button className="absolute top-35 left-17  md:top-50 md:left-77 bg-[#C5C4A6] text-[#4B4B4B] py-2 px-4 rounded shadow-lg hover:bg-[#B0AFA0] transition">
+            about us
+          </button>
+        </Link>
       </div>
 
       <div className="container mx-auto px-20 mt-10">
-        <h3 className="text-1xl font-bold mb-3.5 text-black">Shop Now</h3>
-        <div className="grid grid-cols-3 gap-8">
-          {products.map((product) => (
+        <div className="flex justify-between items-center">
+          <h3 className="text-1xl font-bold mb-3.5 text-black">Shop Now</h3>
+
+          <div className="relative inline-block" ref={dropdownRef}>
+            <button
+              onClick={() => setOpen(!open)}
+              className="px-4 py-2 hover:text-gray-500 transition"
+            >
+              <span>{open ? "▲" : "▼"}</span>
+            </button>
+            {open && (
+              <div className="absolute w-48 bg-white border-gray-200 rounded-lg shadow-xl z-10">
+                <ul className="py-1 text-sm text-gray-700">
+                  <li className="px-4 py-2 font-bold">Sort by</li>
+                  <li
+                    onClick={() => setSortOrder("all")}
+                    className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
+                  >
+                    All
+                    
+                  </li>
+                  <li
+                    onClick={() => setSortOrder("expensive")}
+                    className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
+                  >
+                    Price: High
+                  </li>
+                  <li
+                    onClick={() => setSortOrder("cheap")}
+                    className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
+                  >
+                    Price: Low
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-8 mt-6">
+          {sortProducts(products, sortOrder).map((product) => (
             <Link
               key={product.id}
               href={`/individual/${product.id}`}
