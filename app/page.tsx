@@ -21,9 +21,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [sortOrder, setSortOrder] = useState<"expensive" | "cheap">(
-    "expensive"
-  );
+  const [sortOrder, setSortOrder] = useState<"expensive" | "cheap" | "all">("all");
 
   useEffect(() => {
     const fetchData = async () => {
