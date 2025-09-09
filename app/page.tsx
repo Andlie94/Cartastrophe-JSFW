@@ -1,20 +1,18 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, useRef } from "react";
-import { getProducts } from "../components/fetch";
-import { LoadingSkeletons } from "@/components/loading";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { getProducts } from '../components/fetch';
+import { LoadingSkeletons } from '@/components/loading';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 export type Product = {
   id: string;
   title: string;
   price: number;
   discountedPrice: number;
-  image: {
-    url: string;
-    alt: string;
-  };
+  image: { url: string; alt: string };
 };
 
 export default function Home() {
@@ -22,15 +20,19 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [sortOrder, setSortOrder] = useState<"expensive" | "cheap" | "all">("all");
+  const [sortOrder, setSortOrder] = useState<'expensive' | 'cheap' | 'all'>(
+    'all'
+  );
+
+  const searchParams = useSearchParams();
+  const q = (searchParams.get('q') ?? '').trim().toLowerCase();
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       const result = await getProducts();
       setProducts(result);
       setLoading(false);
-    };
-    fetchData();
+    })();
   }, []);
 
   useEffect(() => {
@@ -42,10 +44,19 @@ export default function Home() {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const visibleProducts = useMemo(() => {
+    if (!q) return sortProducts(products, sortOrder);
+    const filtered = products.filter((p) => {
+      const title = p.title?.toLowerCase() ?? '';
+      const alt = p.image?.alt?.toLowerCase() ?? '';
+      return title.includes(q) || alt.includes(q);
+    });
+    return sortProducts(filtered, sortOrder);
+  }, [products, sortOrder, q]);
 
   if (loading) return <LoadingSkeletons />;
 
@@ -56,17 +67,13 @@ export default function Home() {
     return `$${product.price.toFixed(2)}`;
   }
 
-  function sortProducts(products: Product[], order: "expensive" | "cheap" | "all") {
-    return [...products].sort((a, b) => {
-      if (order === "expensive") {
-        return b.price - a.price;
-      } else if (order === "cheap") {
-        return a.price - b.price;
-      } else {
-        return 0;
-      }
-    });
-  }
+  function sortProducts(list: Product[], order: 'expensive' | 'cheap' | 'all') {
+  return [...list].sort((a, b) => {
+    if (order === 'expensive') return b.price - a.price;
+    if (order === 'cheap') return a.price - b.price;
+    return 0;
+  });
+}
 
   return (
     <div>
@@ -93,34 +100,35 @@ export default function Home() {
 
       <div className="container mx-auto px-20 mt-10">
         <div className="flex justify-between items-center">
-          <h3 className="text-1xl font-bold mb-3.5 text-black">Shop Now</h3>
+          <h3 className="text-1xl font-bold mb-3.5 text-black">
+            {q ? `Shop Now — search: ${q}` : 'Shop Now'}
+          </h3>
 
           <div className="relative inline-block" ref={dropdownRef}>
             <button
               onClick={() => setOpen(!open)}
               className="px-4 py-2 hover:text-gray-500 transition"
             >
-              <span>{open ? "▲" : "▼"}</span>
+              <span>{open ? '▲' : '▼'}</span>
             </button>
             {open && (
               <div className="absolute w-48 bg-white border-gray-200 rounded-lg shadow-xl z-10">
                 <ul className="py-1 text-sm text-gray-700">
                   <li className="px-4 py-2 font-bold">Sort by</li>
                   <li
-                    onClick={() => setSortOrder("all")}
+                    onClick={() => setSortOrder('all')}
                     className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
                   >
                     All
-                    
                   </li>
                   <li
-                    onClick={() => setSortOrder("expensive")}
+                    onClick={() => setSortOrder('expensive')}
                     className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
                   >
                     Price: High
                   </li>
                   <li
-                    onClick={() => setSortOrder("cheap")}
+                    onClick={() => setSortOrder('cheap')}
                     className="px-4 py-2 hover:bg-[#C5C4A6] cursor-pointer"
                   >
                     Price: Low
@@ -132,7 +140,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-3 gap-8 mt-6">
-          {sortProducts(products, sortOrder).map((product) => (
+          {visibleProducts.map((product) => (
             <Link
               key={product.id}
               href={`/individual/${product.id}`}
@@ -140,7 +148,7 @@ export default function Home() {
             >
               <div className="relative w-full h-96 mb-4 rounded-2xl">
                 <Image
-                  src={product.image?.url ?? "/default-image.jpg"}
+                  src={product.image?.url ?? '/default-image.jpg'}
                   alt={product.image?.alt ?? product.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
