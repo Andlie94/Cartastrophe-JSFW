@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { getProducts } from "../components/fetch";
+import { LoadingSkeletons } from "@/components/loading";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -45,7 +46,8 @@ export default function Home() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (loading) return <p>Laster produkter...</p>;
+
+  if (loading) return <LoadingSkeletons />;
 
   function getDisplayPrice(product: Product) {
     if (product.discountedPrice < product.price) {
