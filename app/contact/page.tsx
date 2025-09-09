@@ -1,11 +1,12 @@
-"use client"; 
-
+"use client";
 import React from "react";
+import { ContactFields } from "@/components/inputform";
 
-export default function contact() {
+export default function Contact() {
   return (
     <div>
-      <h1>contact Page</h1>
+      <h1>Contact Page</h1>
+      <ContactFields />
     </div>
   );
 }
