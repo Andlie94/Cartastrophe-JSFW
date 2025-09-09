@@ -1,44 +1,81 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { useCart } from "../app/context/cartContext";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export const SearchButton = () => {
   const [showInput, setShowInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = () => {
-    setShowInput(!showInput);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const [q, setQ] = useState(searchParams.get("q") ?? "");
+
+  useEffect(() => {
+    setQ(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  const handleToggle = () => {
+    setShowInput((prev) => !prev);
     if (!showInput) {
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   };
 
+  const updateUrl = (nextQ: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextQ.trim()) params.set("q", nextQ.trim());
+    else params.delete("q");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUrl(q);
+  };
+
   return (
     <div className="relative">
       {!showInput && (
-        <button onClick={handleClick} className="p-2 rounded hover:bg-gray-200">
+        <button
+          onClick={handleToggle}
+          className="p-2 rounded hover:bg-gray-200"
+        >
           <FaSearch size={20} />
         </button>
       )}
 
       {showInput && (
-        <div className="flex items-center space-x-2">
+        <form onSubmit={onSubmit} className="flex items-center space-x-2">
           <input
             ref={inputRef}
             type="text"
             placeholder="Search..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
             className="p-2 border rounded shadow-md"
           />
           <button
-            onClick={handleClick}
+            type="submit"
             className="p-2 rounded hover:bg-gray-200"
+            aria-label="Search"
+          >
+            <FaSearch size={18} />
+          </button>
+          <button
+            onClick={handleToggle}
+            type="button"
+            className="p-2 rounded hover:bg-gray-200"
+            aria-label="Close search"
           >
             ✕
           </button>
-        </div>
+        </form>
       )}
     </div>
   );
@@ -72,7 +109,9 @@ export default function Header() {
         </div>
 
         <div className="flex-1 flex justify-end items-center mt-2 space-x-4">
-          <SearchButton />
+          <Suspense>
+            <SearchButton />
+          </Suspense>
           <Link
             href="/cart"
             className="p-2 rounded hover:bg-gray-200"
