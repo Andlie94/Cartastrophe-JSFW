@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState, useRef, useEffect } from 'react';
-import { FaShoppingCart, FaSearch } from 'react-icons/fa';
-import { useCart } from '../app/context/cartContext';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import { useCart } from "../app/context/cartContext";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export const SearchButton = () => {
   const [showInput, setShowInput] = useState(false);
@@ -13,10 +14,10 @@ export const SearchButton = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const [q, setQ] = useState(searchParams.get('q') ?? '');
+  const [q, setQ] = useState(searchParams.get("q") ?? "");
 
   useEffect(() => {
-    setQ(searchParams.get('q') ?? '');
+    setQ(searchParams.get("q") ?? "");
   }, [searchParams]);
 
   const handleToggle = () => {
@@ -28,8 +29,8 @@ export const SearchButton = () => {
 
   const updateUrl = (nextQ: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (nextQ.trim()) params.set('q', nextQ.trim());
-    else params.delete('q');
+    if (nextQ.trim()) params.set("q", nextQ.trim());
+    else params.delete("q");
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
@@ -108,7 +109,9 @@ export default function Header() {
         </div>
 
         <div className="flex-1 flex justify-end items-center mt-2 space-x-4">
-          <SearchButton />
+          <Suspense>
+            <SearchButton />
+          </Suspense>
           <Link
             href="/cart"
             className="p-2 rounded hover:bg-gray-200"

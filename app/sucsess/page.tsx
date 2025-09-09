@@ -1,6 +1,7 @@
-"use client"; // hvis den bruker interaktivitet
+"use client"; 
 
 import React from "react";
+
 
 export default function successPage() {
   return (
