@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Header from "../components/header"; 
+import Header from "../components/header";
 import { Footer } from "../components/footer";
 import { CartProvider } from "../app/context/cartContext";
+import { ToastProvider } from "@/components/Toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,12 +43,13 @@ export default function RootLayout({
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F5F3EE]`}>
-        {/* 👇 Dette sørger for at cart-context er tilgjengelig overalt */}
-        <CartProvider>
-          <Header />
-          {children}
-          <Footer />
-        </CartProvider>
+        <ToastProvider>
+          <CartProvider>
+            <Header />
+            {children}
+            <Footer />
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

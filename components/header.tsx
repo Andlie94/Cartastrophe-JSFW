@@ -5,11 +5,11 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { useCart } from "../app/context/cartContext";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import CartDropdown from "@/components/CartDropdown";
 
 export const SearchButton = () => {
   const [showInput, setShowInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -43,7 +43,6 @@ export const SearchButton = () => {
           <FaSearch size={20} />
         </button>
       )}
-
       {showInput && (
         <form onSubmit={onSubmit} className="flex items-center gap-2">
           <input
@@ -67,63 +66,72 @@ export const SearchButton = () => {
 };
 
 export default function Header() {
-  const { toggleCart } = useCart();
   const [open, setOpen] = useState(false);
+  const { toggleCart, isOpen, count } = useCart();
 
   return (
-    <header className="w-full">
-      <div className="w-full px-4 md:px-6 py-4 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center">
-        <div className="flex-1 justify-self-start">
-          <Link href="/" className="block leading-tight">
-            <h1 className="text-2xl md:text-3xl">Cartastrophe</h1>
-            <p className="text-xs md:text-sm">Oops, I bought it again</p>
-          </Link>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-6 justify-self-center">
-          <Link href="/" className="hover:underline">Home</Link>
-          <span className="w-px h-6 bg-blue-900" />
-          <Link href="/contact" className="hover:underline">Contact</Link>
-          <span className="w-px h-6 bg-blue-900" />
-          <Link href="/about" className="hover:underline">About</Link>
-        </nav>
-
-        <div className="flex items-center gap-3 justify-end">
-          <div className="hidden md:block">
-            <Suspense>
-              <SearchButton />
-            </Suspense>
+    <>
+      <header className="w-full">
+        <div className="w-full px-4 md:px-6 py-4 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center">
+          <div className="flex-1 justify-self-start">
+            <Link href="/" className="block leading-tight">
+              <h1 className="text-2xl md:text-3xl">Cartastrophe</h1>
+              <p className="text-xs md:text-sm">Oops, I bought it again</p>
+            </Link>
           </div>
 
-          <Link href="/cart" className="p-2" aria-label="Go to cart">
-            <FaShoppingCart size={24} />
-          </Link>
+          <nav className="hidden md:flex items-center gap-6 justify-self-center">
+            <Link href="/" className="hover:underline">Home</Link>
+            <span className="w-px h-6 bg-blue-900" />
+            <Link href="/contact" className="hover:underline">Contact</Link>
+            <span className="w-px h-6 bg-blue-900" />
+            <Link href="/about" className="hover:underline">About</Link>
+          </nav>
 
-          <button
-            className="md:hidden p-2"
-            onClick={() => setOpen(v => !v)}
-            aria-label="Toggle menu"
-            aria-expanded={open}
-          >
-            <span className="text-2xl leading-none">☰</span>
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-3 justify-end">
+            <div className="hidden md:block">
+              <Suspense>
+                <SearchButton />
+              </Suspense>
+            </div>
 
-      {open && (
-        <div className="md:hidden border-t">
-          <div className="w-full px-4 py-3 flex flex-col gap-4">
-            <Suspense>
-              <SearchButton />
-            </Suspense>
-            <nav className="flex flex-col gap-3">
-              <Link href="/" onClick={() => setOpen(false)} className="py-1">Home</Link>
-              <Link href="/contact" onClick={() => setOpen(false)} className="py-1">Contact</Link>
-              <Link href="/about" onClick={() => setOpen(false)} className="py-1">About</Link>
-            </nav>
+            <button className="relative p-2" aria-label="Toggle cart" onClick={toggleCart}>
+              <FaShoppingCart size={24} />
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 grid place-items-center rounded-full bg-black text-white text-[10px]">
+                  {count}
+                </span>
+              )}
+            </button>
+
+            <button
+              className="md:hidden p-2"
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={open}
+            >
+              <span className="text-2xl leading-none">☰</span>
+            </button>
           </div>
         </div>
-      )}
-    </header>
+
+        {open && (
+          <div className="md:hidden border-t">
+            <div className="w-full px-4 py-3 flex flex-col gap-4">
+              <Suspense>
+                <SearchButton />
+              </Suspense>
+              <nav className="flex flex-col gap-3">
+                <Link href="/" onClick={() => setOpen(false)} className="py-1">Home</Link>
+                <Link href="/contact" onClick={() => setOpen(false)} className="py-1">Contact</Link>
+                <Link href="/about" onClick={() => setOpen(false)} className="py-1">About</Link>
+              </nav>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {isOpen && <CartDropdown />}
+    </>
   );
 }

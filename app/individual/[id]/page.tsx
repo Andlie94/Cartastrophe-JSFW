@@ -1,6 +1,7 @@
 import React from "react";
 import { getProductById } from "@/components/fetch";
 import Image from "next/image";
+import AddToCartButton from "@/components/AddToCartButton";
 
 export const dynamic = "force-static";
 
@@ -38,12 +39,7 @@ export default async function IndividualPage({ params }: { params: { id: string 
             {product.description && (
               <p className="text-sm sm:text-base leading-relaxed text-gray-700">{product.description}</p>
             )}
-            <button
-              type="button"
-              className="hidden md:inline-flex justify-center items-center px-6 py-3 rounded-md text-black bg-brand-button hover:bg-brand-button-hover"
-            >
-              Add to cart
-            </button>
+            <AddToCartButton id={product.id} title={product.title} price={product.price} image={product.image} />
           </div>
         </div>
 
@@ -68,19 +64,21 @@ export default async function IndividualPage({ params }: { params: { id: string 
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/90 backdrop-blur border-t">
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
-          <div className="flex-1">
-            <div className="text-sm text-gray-600">Price</div>
-            <div className="text-lg font-semibold">{product.price} USD</div>
-          </div>
-          <button
-            type="button"
-            className="flex-[2] h-12 rounded-md text-black bg-brand-button hover:bg-brand-button-hover"
-          >
-            Add to cart
-          </button>
-        </div>
-      </div>
+  <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
+    <div className="flex-1">
+      <div className="text-sm text-gray-600">Price</div>
+      <div className="text-lg font-semibold">{product.price} USD</div>
+    </div>
+    <AddToCartButton
+      id={product.id}
+      title={product.title}
+      price={product.price}
+      image={product.image}
+      className="flex-[2] h-12 w-full"
+      openCartOnAdd={true}
+    />
+  </div>
+</div>
     </>
   );
 }
