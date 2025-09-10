@@ -41,7 +41,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F5F3EE]`}>
         {/* 👇 Dette sørger for at cart-context er tilgjengelig overalt */}
         <CartProvider>
           <Header />
