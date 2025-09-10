@@ -8,6 +8,8 @@
   --textcolor3: #B0B0B0;
   --font-playfair: "Playfair Display", serif;
   --font-inter-sans: "inter", sans-serif;
+  --brand-button: #C5C4A6;
+  --brand-button-hover: #b1b08a;
 }
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair);
@@ -30,6 +32,8 @@ p, li, a, span, div {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-button: var(--brand-button);
+  --color-brand-button-hover: var(--brand-button-hover);
 }
 
 body {
