@@ -10,11 +10,20 @@ function Stars({ rating }: { rating: number }) {
   return <span className="text-yellow-500 text-base sm:text-lg">{"★".repeat(r)}{"☆".repeat(5 - r)}</span>;
 }
 
-export default async function IndividualPage({ params }: { params: { id: string } }) {
-  const product = await getProductById(params.id);
+type Review = {
+  username: string;
+  rating: number;
+  description?: string;
+};
+
+export default async function IndividualPage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const product = await getProductById(id);
   if (!product) return <div className="px-4 py-12 text-center">Fant ikke produkt</div>;
 
-  const reviews = product.reviews || [];
+  const reviews: Review[] = product.reviews ?? [];
 
   return (
     <>
@@ -47,13 +56,13 @@ export default async function IndividualPage({ params }: { params: { id: string 
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Reviews</h2>
           {reviews.length > 0 ? (
             <div className="space-y-4 md:space-y-6">
-              {reviews.map((r: any, i: number) => (
+              {reviews.map((review: Review, i: number) => (
                 <div key={i} className="border rounded-lg shadow-sm bg-white p-4 sm:p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                    <p className="font-bold text-sm sm:text-base">{r.username}</p>
-                    <Stars rating={r.rating ?? 0} />
+                    <p className="font-bold text-sm sm:text-base">{review.username}</p>
+                    <Stars rating={review.rating ?? 0} />
                   </div>
-                  {r.description && <p className="text-sm md:text-base text-gray-700">{r.description}</p>}
+                  {review.description && <p className="text-sm md:text-base text-gray-700">{review.description}</p>}
                 </div>
               ))}
             </div>
@@ -64,21 +73,21 @@ export default async function IndividualPage({ params }: { params: { id: string 
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/90 backdrop-blur border-t">
-  <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
-    <div className="flex-1">
-      <div className="text-sm text-gray-600">Price</div>
-      <div className="text-lg font-semibold">{product.price} USD</div>
-    </div>
-    <AddToCartButton
-      id={product.id}
-      title={product.title}
-      price={product.price}
-      image={product.image}
-      className="flex-[2] h-12 w-full"
-      openCartOnAdd={true}
-    />
-  </div>
-</div>
+        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
+          <div className="flex-1">
+            <div className="text-sm text-gray-600">Price</div>
+            <div className="text-lg font-semibold">{product.price} USD</div>
+          </div>
+          <AddToCartButton
+            id={product.id}
+            title={product.title}
+            price={product.price}
+            image={product.image}
+            className="flex-[2] h-12 w-full"
+            openCartOnAdd={true}
+          />
+        </div>
+      </div>
     </>
   );
 }
