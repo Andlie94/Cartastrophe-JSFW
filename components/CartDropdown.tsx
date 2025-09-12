@@ -44,11 +44,12 @@ export default function CartDropdown() {
                 <div className="relative h-14 w-14 rounded overflow-hidden bg-gray-100 shrink-0">
                   {it.image?.url ? (
                     <Image
-                      src={it.image.url}
-                      alt={it.image.alt ?? it.title}
-                      fill
-                      className="object-cover"
-                    />
+                    src={it.image.url}
+                    alt={it.image.alt ?? it.title}
+                    width={56}
+                    height={56}
+                    className="object-cover"
+                  />
                   ) : null}
                 </div>
 
