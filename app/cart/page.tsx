@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "@/app/context/cartContext";
 import Image from "next/image";
 
@@ -15,6 +15,8 @@ type FormValues = {
 
 type FormErrors = Partial<Record<keyof FormValues, string>>;
 
+const STORAGE_KEY = "checkoutForm";
+
 export default function CheckoutPage() {
   const { items, total } = useCart();
 
@@ -28,13 +30,13 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [saveInfo, setSaveInfo] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const postalRegex = /^[0-9]{4}$/;
 
   function validate(field: keyof FormValues, value: string) {
     let error = "";
-
     switch (field) {
       case "email":
         if (!value) error = "Email is required";
@@ -56,7 +58,6 @@ export default function CheckoutPage() {
         if (!postalRegex.test(value)) error = "Postal code must be 4 digits";
         break;
     }
-
     return error;
   }
 
@@ -78,9 +79,33 @@ export default function CheckoutPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
-
     console.log("Form submitted:", values);
   }
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setValues((prev) => ({ ...prev, ...parsed }));
+      setSaveInfo(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (saveInfo) {
+      const toSave = {
+        email: values.email,
+        fullName: values.fullName,
+        address: values.address,
+        city: values.city,
+        country: values.country,
+        postalCode: values.postalCode,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [values, saveInfo]);
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -90,9 +115,7 @@ export default function CheckoutPage() {
           Please fill out your contact information
         </p>
 
-        {/* --- FORM --- */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Email */}
           <div>
             <label className="block mb-2">Email</label>
             <input
@@ -112,7 +135,6 @@ export default function CheckoutPage() {
             Shipping Address
           </h2>
 
-          {/* Full name */}
           <div>
             <label className="block mb-2">Full name</label>
             <input
@@ -128,7 +150,6 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Address */}
           <div>
             <label className="block mb-2">Address</label>
             <input
@@ -144,7 +165,6 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* City */}
           <div>
             <label className="block mb-2">City</label>
             <input
@@ -160,7 +180,6 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Country */}
           <div>
             <label className="block mb-2">Country</label>
             <input
@@ -176,7 +195,6 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Postal code */}
           <div>
             <label className="block mb-2">Postal code</label>
             <input
@@ -192,6 +210,15 @@ export default function CheckoutPage() {
             )}
           </div>
 
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={saveInfo}
+              onChange={(e) => setSaveInfo(e.target.checked)}
+            />
+            Save my info for next time
+          </label>
+
           <button
             type="submit"
             disabled={!isFormValid}
@@ -206,7 +233,6 @@ export default function CheckoutPage() {
         </form>
       </section>
 
-      {/* --- ORDER SUMMARY --- */}
       <section>
         <h2 className="text-2xl font-bold font-playfair mb-6">Order Summary</h2>
         {items.length === 0 ? (
@@ -221,14 +247,14 @@ export default function CheckoutPage() {
                 >
                   {item.image?.url && (
                     <div className="relative w-20 h-20 overflow-hidden rounded-md">
-                    <Image
-                      src={item.image.url}
-                      alt={item.image.alt ?? item.title}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                    />
-                  </div>
+                      <Image
+                        src={item.image.url}
+                        alt={item.image.alt ?? item.title}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </div>
                   )}
                   <div>
                     <p className="font-semibold font-playfair text-base md:text-lg">
