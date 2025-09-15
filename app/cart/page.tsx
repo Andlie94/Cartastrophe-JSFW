@@ -26,7 +26,7 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 2,
   }).format(Math.round(value * 100) / 100);
 
-const FREE_SHIPPING_THRESHOLD = 1000;
+const FREE_SHIPPING_THRESHOLD = 100;
 const FLAT_SHIPPING_RATE = 10;
 
 export default function CheckoutPage() {
@@ -43,10 +43,9 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [saveInfo, setSaveInfo] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const postalRegex = /^[0-9]{4}$/;
@@ -92,23 +91,21 @@ export default function CheckoutPage() {
     Object.values(values).every((v) => v !== "") &&
     Object.values(errors).every((e) => e === "");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
 
-    setLoading(true);
-    setError(false);
-
-    setTimeout(() => {
-      if (Math.random() > 0.2) {
-        setSuccess(true);
-        clear();
-        setOrderId(`#${Math.floor(10000 + Math.random() * 90000)}`); // random 5-sifret ID
-      } else {
-        setError(true);
-      }
-      setLoading(false);
-    }, 1500);
+    setIsPlacingOrder(true);
+    try {
+      await new Promise((res) => setTimeout(res, 1500));
+      const newOrderId = Math.floor(10000 + Math.random() * 90000).toString();
+      setOrderId(newOrderId);
+      clear();
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsPlacingOrder(false);
+    }
   }
 
   useEffect(() => {
@@ -122,93 +119,41 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (saveInfo) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+      const toSave = {
+        email: values.email,
+        fullName: values.fullName,
+        address: values.address,
+        city: values.city,
+        country: values.country,
+        postalCode: values.postalCode,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
   }, [values, saveInfo]);
 
-  const shipping = total >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_RATE;
+  const shipping = total >= FREE_SHIPPING_THRESHOLD || total === 0 ? 0 : FLAT_SHIPPING_RATE;
   const grandTotal = total + shipping;
 
-  if (loading) {
+  if (orderId) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <p className="text-lg font-medium">Placing order...</p>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="max-w-2xl mx-auto px-4 py-20 text-center space-y-6">
-        <p className="text-red-600 font-medium">
-          Something went wrong. Please try again.
+        <h1 className="text-3xl font-bold font-playfair mb-6">
+          🎉 Thank you for your order!
+        </h1>
+        <p className="mb-4 text-lg">
+          Your order <span className="font-mono font-semibold">#{orderId}</span> has been placed successfully.
         </p>
-        <button
-          onClick={() => setError(false)}
-          className="px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
-        >
-          Try again
-        </button>
-      </main>
-    );
-  }
-
-  if (success) {
-    return (
-      <main className="max-w-2xl mx-auto px-4 py-20 text-center space-y-10">
-        <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-600 text-green-600">
-          ✓
-        </div>
-
-        <div>
-          <h1 className="text-3xl font-bold font-playfair mb-4">
-            Order Confirmed!
-          </h1>
-          <p className="text-gray-700">
-            Thank you for shopping at{" "}
-            <span className="font-semibold">Cartastrophe</span> – we’re as
-            excited as you are (maybe even more).
-          </p>
-          <p className="mt-2 text-gray-600">
-            Your order <span className="font-semibold">{orderId}</span> has been
-            successfully placed. <br />
-            You’ll receive a confirmation email shortly with all the details.
-          </p>
-        </div>
-
-        <div className="text-left space-y-6 border-t pt-8">
-          <div>
-            <h2 className="text-lg font-semibold mb-2">📦 Processing your order</h2>
-            <p className="text-gray-700">
-              We’re packing your items with care. Expect dispatch within 1–2 business days.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-semibold mb-2">🚚 Shipping time</h2>
-            <p className="text-gray-700">
-              Depending on your location, your order will arrive in 3–7 business
-              days. You’ll receive a tracking number as soon as it’s on the
-              move.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-lg font-semibold mb-2">💬 Need help?</h2>
-            <p className="text-gray-700">
-              If you have questions, contact us anytime via the contact form.
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => (window.location.href = "/")}
-          className="mt-8 inline-block px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f] transition"
+        <p className="text-gray-600 mb-8">
+          We’re processing your order and will send you an update when it ships.
+        </p>
+        <Link
+          href="/"
+          className="inline-block px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
         >
           Continue shopping
-        </button>
+        </Link>
       </main>
     );
   }
@@ -218,9 +163,7 @@ export default function CheckoutPage() {
       {/* --- FORM --- */}
       <section>
         <h1 className="text-3xl font-bold font-playfair mb-8">Checkout</h1>
-        <p className="mb-6 font-medium">
-          Please fill out your contact information
-        </p>
+        <p className="mb-6 font-medium">Please fill out your contact information</p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -232,110 +175,53 @@ export default function CheckoutPage() {
               className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
+              disabled={isPlacingOrder}
             />
-            {errors.email && (
-              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
 
-          <h2 className="text-2xl font-bold font-playfair mt-10">
-            Shipping Address
-          </h2>
+          <h2 className="text-2xl font-bold font-playfair mt-10">Shipping Address</h2>
 
-          <div>
-            <label className="block mb-2">Full name</label>
-            <input
-              type="text"
-              value={values.fullName}
-              onChange={(e) => handleChange(e, "fullName")}
-              className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                errors.fullName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.fullName && (
-              <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block mb-2">Address</label>
-            <input
-              type="text"
-              value={values.address}
-              onChange={(e) => handleChange(e, "address")}
-              className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                errors.address ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.address && (
-              <p className="text-red-600 text-sm mt-1">{errors.address}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block mb-2">City</label>
-            <input
-              type="text"
-              value={values.city}
-              onChange={(e) => handleChange(e, "city")}
-              className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                errors.city ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.city && (
-              <p className="text-red-600 text-sm mt-1">{errors.city}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block mb-2">Country</label>
-            <input
-              type="text"
-              value={values.country}
-              onChange={(e) => handleChange(e, "country")}
-              className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                errors.country ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.country && (
-              <p className="text-red-600 text-sm mt-1">{errors.country}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block mb-2">Postal code</label>
-            <input
-              type="text"
-              value={values.postalCode}
-              onChange={(e) => handleChange(e, "postalCode")}
-              className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                errors.postalCode ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-            {errors.postalCode && (
-              <p className="text-red-600 text-sm mt-1">{errors.postalCode}</p>
-            )}
-          </div>
+          {(["fullName", "address", "city", "country", "postalCode"] as (keyof FormValues)[]).map(
+            (field) => (
+              <div key={field}>
+                <label className="block mb-2 capitalize">{field}</label>
+                <input
+                  type="text"
+                  value={values[field]}
+                  onChange={(e) => handleChange(e, field)}
+                  className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
+                    errors[field] ? "border-red-500" : "border-gray-300"
+                  }`}
+                  disabled={isPlacingOrder}
+                />
+                {errors[field] && (
+                  <p className="text-red-600 text-sm mt-1">{errors[field]}</p>
+                )}
+              </div>
+            )
+          )}
 
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={saveInfo}
               onChange={(e) => setSaveInfo(e.target.checked)}
+              disabled={isPlacingOrder}
             />
             Save my info for next time
           </label>
 
           <button
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isPlacingOrder}
             className={`mt-6 py-3 px-6 rounded-md transition block mx-auto ${
-              isFormValid
+              isFormValid && !isPlacingOrder
                 ? "bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            PLACE ORDER
+            {isPlacingOrder ? "Placing order..." : "PLACE ORDER"}
           </button>
         </form>
       </section>
@@ -343,7 +229,14 @@ export default function CheckoutPage() {
       {/* --- ORDER SUMMARY --- */}
       <section>
         <h2 className="text-2xl font-bold font-playfair mb-6">Order Summary</h2>
-        {items.length === 0 ? (
+
+        {items === undefined ? (
+          <div className="space-y-4 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded" />
+            <div className="h-6 bg-gray-200 rounded" />
+            <div className="h-6 bg-gray-200 rounded" />
+          </div>
+        ) : items.length === 0 ? (
           <div className="space-y-4">
             <p>Your cart is empty.</p>
             <Link
@@ -385,26 +278,41 @@ export default function CheckoutPage() {
 
                     <div className="flex items-center gap-2 mt-2">
                       <button
-                        onClick={() => decrease(item.id)}
-                        className="h-6 w-6 flex items-center justify-center border rounded"
+                        onClick={async () => {
+                          setLoadingItemId(item.id);
+                          await decrease(item.id);
+                          setLoadingItemId(null);
+                        }}
+                        className="h-6 w-6 flex items-center justify-center border rounded disabled:opacity-50"
                         aria-label={`Decrease quantity of ${item.title}`}
+                        disabled={loadingItemId === item.id}
                       >
                         –
                       </button>
                       <span className="text-sm">{item.qty}</span>
                       <button
-                        onClick={() => increase(item.id)}
-                        className="h-6 w-6 flex items-center justify-center border rounded"
+                        onClick={async () => {
+                          setLoadingItemId(item.id);
+                          await increase(item.id);
+                          setLoadingItemId(null);
+                        }}
+                        className="h-6 w-6 flex items-center justify-center border rounded disabled:opacity-50"
                         aria-label={`Increase quantity of ${item.title}`}
+                        disabled={loadingItemId === item.id}
                       >
                         +
                       </button>
                     </div>
                   </div>
                   <button
-                    onClick={() => remove(item.id)}
-                    className="text-red-500 text-lg font-bold"
+                    onClick={async () => {
+                      setLoadingItemId(item.id);
+                      await remove(item.id);
+                      setLoadingItemId(null);
+                    }}
+                    className="text-red-500 text-lg font-bold disabled:opacity-50"
                     aria-label={`Remove ${item.title}`}
+                    disabled={loadingItemId === item.id}
                   >
                     ×
                   </button>
@@ -419,9 +327,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Shipping</span>
-                <span>
-                  {shipping === 0 ? "Free" : formatCurrency(shipping)}
-                </span>
+                <span>{shipping === 0 ? "Free" : formatCurrency(shipping)}</span>
               </div>
               <div className="flex justify-between border-t pt-4 text-lg font-semibold">
                 <span>Total</span>
