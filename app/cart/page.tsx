@@ -24,7 +24,11 @@ const formatCurrency = (value: number) =>
     currency: "USD",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(Math.round(value * 100) / 100);
+  }).format(Math.round(value * 500) / 500);
+
+// --- Shipping config ---
+const FREE_SHIPPING_THRESHOLD = 500;
+const FLAT_SHIPPING_RATE = 10;
 
 export default function CheckoutPage() {
   const { items, total, increase, decrease, remove } = useCart();
@@ -115,6 +119,10 @@ export default function CheckoutPage() {
       localStorage.removeItem(STORAGE_KEY);
     }
   }, [values, saveInfo]);
+
+  // --- Shipping calculation ---
+  const shipping = total >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_RATE;
+  const grandTotal = total + shipping;
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -322,11 +330,13 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Shipping</span>
-                <span>Free</span>
+                <span>
+                  {shipping === 0 ? "Free" : formatCurrency(shipping)}
+                </span>
               </div>
               <div className="flex justify-between border-t pt-4 text-lg font-semibold">
                 <span>Total</span>
-                <span>{formatCurrency(total)}</span>
+                <span>{formatCurrency(grandTotal)}</span>
               </div>
             </div>
           </>
