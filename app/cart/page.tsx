@@ -18,6 +18,14 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 const STORAGE_KEY = "checkoutForm";
 
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Math.round(value * 100) / 100);
+
 export default function CheckoutPage() {
   const { items, total, increase, decrease, remove } = useCart();
 
@@ -272,10 +280,12 @@ export default function CheckoutPage() {
                       {item.title}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {item.qty} × {item.price.toFixed(2)} USD
+                      {item.qty} × {formatCurrency(item.price)}
+                    </p>
+                    <p className="text-sm font-medium">
+                      {formatCurrency(item.price * item.qty)}
                     </p>
 
-                    {/* Quantity controls */}
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => decrease(item.id)}
@@ -308,7 +318,7 @@ export default function CheckoutPage() {
             <div className="mt-8 space-y-2 text-sm sm:text-base">
               <div className="flex justify-between border-t pt-4">
                 <span className="font-medium">Subtotal</span>
-                <span>{total.toFixed(2)} USD</span>
+                <span>{formatCurrency(total)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Shipping</span>
@@ -316,7 +326,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between border-t pt-4 text-lg font-semibold">
                 <span>Total</span>
-                <span>{total.toFixed(2)} USD</span>
+                <span>{formatCurrency(total)}</span>
               </div>
             </div>
           </>
