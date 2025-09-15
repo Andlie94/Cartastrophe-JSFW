@@ -19,7 +19,7 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 const STORAGE_KEY = "checkoutForm";
 
 export default function CheckoutPage() {
-  const { items, total, remove } = useCart();
+  const { items, total, increase, decrease, remove } = useCart();
 
   const [values, setValues] = useState<FormValues>({
     email: "",
@@ -36,25 +36,8 @@ export default function CheckoutPage() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const postalRegex = /^[0-9]{4}$/;
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      setValues(JSON.parse(saved));
-      setSaveInfo(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (saveInfo) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }, [values, saveInfo]);
-
   function validate(field: keyof FormValues, value: string) {
     let error = "";
-
     switch (field) {
       case "email":
         if (!value) error = "Email is required";
@@ -76,7 +59,6 @@ export default function CheckoutPage() {
         if (!postalRegex.test(value)) error = "Postal code must be 4 digits";
         break;
     }
-
     return error;
   }
 
@@ -98,16 +80,37 @@ export default function CheckoutPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
-
     console.log("Form submitted:", values);
+  }
 
-    if (!saveInfo) {
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setValues((prev) => ({ ...prev, ...parsed }));
+      setSaveInfo(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (saveInfo) {
+      const toSave = {
+        email: values.email,
+        fullName: values.fullName,
+        address: values.address,
+        city: values.city,
+        country: values.country,
+        postalCode: values.postalCode,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    } else {
       localStorage.removeItem(STORAGE_KEY);
     }
-  }
+  }, [values, saveInfo]);
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
+      {/* --- FORM --- */}
       <section>
         <h1 className="text-3xl font-bold font-playfair mb-8">Checkout</h1>
         <p className="mb-6 font-medium">
@@ -232,6 +235,7 @@ export default function CheckoutPage() {
         </form>
       </section>
 
+      {/* --- ORDER SUMMARY --- */}
       <section>
         <h2 className="text-2xl font-bold font-playfair mb-6">Order Summary</h2>
         {items.length === 0 ? (
@@ -270,11 +274,30 @@ export default function CheckoutPage() {
                     <p className="text-sm text-gray-600">
                       {item.qty} × {item.price.toFixed(2)} USD
                     </p>
+
+                    {/* Quantity controls */}
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => decrease(item.id)}
+                        className="h-6 w-6 flex items-center justify-center border rounded"
+                        aria-label={`Decrease quantity of ${item.title}`}
+                      >
+                        –
+                      </button>
+                      <span className="text-sm">{item.qty}</span>
+                      <button
+                        onClick={() => increase(item.id)}
+                        className="h-6 w-6 flex items-center justify-center border rounded"
+                        aria-label={`Increase quantity of ${item.title}`}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                   <button
                     onClick={() => remove(item.id)}
                     className="text-red-500 text-lg font-bold"
-                    aria-label="Remove item"
+                    aria-label={`Remove ${item.title}`}
                   >
                     ×
                   </button>
