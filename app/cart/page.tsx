@@ -24,14 +24,13 @@ const formatCurrency = (value: number) =>
     currency: "USD",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(Math.round(value * 500) / 500);
+  }).format(Math.round(value * 100) / 100);
 
-// --- Shipping config ---
-const FREE_SHIPPING_THRESHOLD = 500;
+const FREE_SHIPPING_THRESHOLD = 1000;
 const FLAT_SHIPPING_RATE = 10;
 
 export default function CheckoutPage() {
-  const { items, total, increase, decrease, remove } = useCart();
+  const { items, total, increase, decrease, remove, clear } = useCart();
 
   const [values, setValues] = useState<FormValues>({
     email: "",
@@ -44,6 +43,10 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [saveInfo, setSaveInfo] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const postalRegex = /^[0-9]{4}$/;
@@ -92,7 +95,20 @@ export default function CheckoutPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
-    console.log("Form submitted:", values);
+
+    setLoading(true);
+    setError(false);
+
+    setTimeout(() => {
+      if (Math.random() > 0.2) {
+        setSuccess(true);
+        clear();
+        setOrderId(`#${Math.floor(10000 + Math.random() * 90000)}`); // random 5-sifret ID
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    }, 1500);
   }
 
   useEffect(() => {
@@ -106,23 +122,96 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (saveInfo) {
-      const toSave = {
-        email: values.email,
-        fullName: values.fullName,
-        address: values.address,
-        city: values.city,
-        country: values.country,
-        postalCode: values.postalCode,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
   }, [values, saveInfo]);
 
-  // --- Shipping calculation ---
   const shipping = total >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_RATE;
   const grandTotal = total + shipping;
+
+  if (loading) {
+    return (
+      <main className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <p className="text-lg font-medium">Placing order...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="max-w-2xl mx-auto px-4 py-20 text-center space-y-6">
+        <p className="text-red-600 font-medium">
+          Something went wrong. Please try again.
+        </p>
+        <button
+          onClick={() => setError(false)}
+          className="px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
+        >
+          Try again
+        </button>
+      </main>
+    );
+  }
+
+  if (success) {
+    return (
+      <main className="max-w-2xl mx-auto px-4 py-20 text-center space-y-10">
+        <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-600 text-green-600">
+          ✓
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-bold font-playfair mb-4">
+            Order Confirmed!
+          </h1>
+          <p className="text-gray-700">
+            Thank you for shopping at{" "}
+            <span className="font-semibold">Cartastrophe</span> – we’re as
+            excited as you are (maybe even more).
+          </p>
+          <p className="mt-2 text-gray-600">
+            Your order <span className="font-semibold">{orderId}</span> has been
+            successfully placed. <br />
+            You’ll receive a confirmation email shortly with all the details.
+          </p>
+        </div>
+
+        <div className="text-left space-y-6 border-t pt-8">
+          <div>
+            <h2 className="text-lg font-semibold mb-2">📦 Processing your order</h2>
+            <p className="text-gray-700">
+              We’re packing your items with care. Expect dispatch within 1–2 business days.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold mb-2">🚚 Shipping time</h2>
+            <p className="text-gray-700">
+              Depending on your location, your order will arrive in 3–7 business
+              days. You’ll receive a tracking number as soon as it’s on the
+              move.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold mb-2">💬 Need help?</h2>
+            <p className="text-gray-700">
+              If you have questions, contact us anytime via the contact form.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="mt-8 inline-block px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f] transition"
+        >
+          Continue shopping
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
