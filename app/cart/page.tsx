@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/app/context/cartContext";
 import Image from "next/image";
+import Link from "next/link";
 
 type FormValues = {
   email: string;
@@ -18,7 +19,7 @@ type FormErrors = Partial<Record<keyof FormValues, string>>;
 const STORAGE_KEY = "checkoutForm";
 
 export default function CheckoutPage() {
-  const { items, total } = useCart();
+  const { items, total, remove } = useCart();
 
   const [values, setValues] = useState<FormValues>({
     email: "",
@@ -35,8 +36,25 @@ export default function CheckoutPage() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const postalRegex = /^[0-9]{4}$/;
 
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      setValues(JSON.parse(saved));
+      setSaveInfo(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (saveInfo) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [values, saveInfo]);
+
   function validate(field: keyof FormValues, value: string) {
     let error = "";
+
     switch (field) {
       case "email":
         if (!value) error = "Email is required";
@@ -58,6 +76,7 @@ export default function CheckoutPage() {
         if (!postalRegex.test(value)) error = "Postal code must be 4 digits";
         break;
     }
+
     return error;
   }
 
@@ -79,33 +98,13 @@ export default function CheckoutPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
+
     console.log("Form submitted:", values);
-  }
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setValues((prev) => ({ ...prev, ...parsed }));
-      setSaveInfo(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (saveInfo) {
-      const toSave = {
-        email: values.email,
-        fullName: values.fullName,
-        address: values.address,
-        city: values.city,
-        country: values.country,
-        postalCode: values.postalCode,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-    } else {
+    if (!saveInfo) {
       localStorage.removeItem(STORAGE_KEY);
     }
-  }, [values, saveInfo]);
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -236,7 +235,15 @@ export default function CheckoutPage() {
       <section>
         <h2 className="text-2xl font-bold font-playfair mb-6">Order Summary</h2>
         {items.length === 0 ? (
-          <p>Your cart is empty.</p>
+          <div className="space-y-4">
+            <p>Your cart is empty.</p>
+            <Link
+              href="/"
+              className="inline-block px-4 py-2 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
+            >
+              Continue shopping
+            </Link>
+          </div>
         ) : (
           <>
             <ul className="space-y-4">
@@ -256,7 +263,7 @@ export default function CheckoutPage() {
                       />
                     </div>
                   )}
-                  <div>
+                  <div className="flex-1">
                     <p className="font-semibold font-playfair text-base md:text-lg">
                       {item.title}
                     </p>
@@ -264,6 +271,13 @@ export default function CheckoutPage() {
                       {item.qty} × {item.price.toFixed(2)} USD
                     </p>
                   </div>
+                  <button
+                    onClick={() => remove(item.id)}
+                    className="text-red-500 text-lg font-bold"
+                    aria-label="Remove item"
+                  >
+                    ×
+                  </button>
                 </li>
               ))}
             </ul>
