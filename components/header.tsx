@@ -76,15 +76,15 @@ export default function Header() {
           <div className="flex-1 justify-self-start">
             <Link href="/" className="block leading-tight">
               <h1 className="text-2xl md:text-3xl">Cartastrophe</h1>
-              <p className="text-xs md:text-sm">Oops, I bought it again</p>
+              <p className="text-xs md:text-sm ml-1.5 md:ml-3">Oops, I bought it again</p>
             </Link>
           </div>
 
           <nav className="hidden md:flex items-center gap-6 justify-self-center">
             <Link href="/" className="hover:underline">Home</Link>
-            <span className="w-px h-6 bg-blue-900" />
+            <span className="w-px h-6 bg-gray-900" />
             <Link href="/contact" className="hover:underline">Contact</Link>
-            <span className="w-px h-6 bg-blue-900" />
+            <span className="w-px h-6 bg-gray-900" />
             <Link href="/about" className="hover:underline">About</Link>
           </nav>
 
