@@ -25,7 +25,7 @@ export function ContactFields() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded shadow">
+    <div className="max-w-md mx-auto p-8 rounded">
       <h2 className="text-2xl font-bold mb-6 text-center">Contact Us</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -33,7 +33,7 @@ export function ContactFields() {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700"
           >
-            Name
+            <p>Name</p>
           </label>
           <input
             type="text"
@@ -43,7 +43,7 @@ export function ContactFields() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6]"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#ffffff] focus:border-[#C5C4A6] bg-white"
           />
         </div>
 
@@ -52,7 +52,7 @@ export function ContactFields() {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
           >
-            Email
+          <p>Email</p>
           </label>
           <input
             type="email"
@@ -61,14 +61,14 @@ export function ContactFields() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6]"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6] bg-white"
           />
         </div>
         <label
           htmlFor="subject"
           className="block text-sm font-medium text-gray-700"
         >
-          Subject
+         <p>Subject</p>
         </label>
         <input
           type="text"
@@ -78,7 +78,7 @@ export function ContactFields() {
           required
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6]"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6] bg-white"
         />
 
         <div>
@@ -86,7 +86,7 @@ export function ContactFields() {
             htmlFor="message"
             className="block text-sm font-medium text-gray-700"
           >
-            Message
+            <p>Message</p>
           </label>
           <textarea
             id="message"
@@ -96,7 +96,7 @@ export function ContactFields() {
             required
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6]"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#C5C4A6] focus:border-[#C5C4A6] bg-white"
           />
         </div>
 
@@ -105,7 +105,7 @@ export function ContactFields() {
             type="submit"
             className="bg-[#C5C4A6] text-white px-4 py-2 rounded hover:bg-[#B0AFA0] transition"
           >
-            Submit
+            <p>Send Message</p>
           </button>
         </div>
       </form>
