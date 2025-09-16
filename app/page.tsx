@@ -151,14 +151,14 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
             {visibleProducts.map((product) => (
               <Link
                 key={product.id}
                 href={`/individual/${product.id}`}
                 className="rounded-2xl block"
               >
-                <div className="relative w-full h-96 mb-4 rounded-2xl">
+                <div className="relative w-full h-80 mb-2 md:h-96 md:mb-4 rounded-2xl">
                   <Image
                     src={product.image?.url ?? "/default-image.jpg"}
                     alt={product.image?.alt ?? product.title}
