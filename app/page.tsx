@@ -158,6 +158,7 @@ export default function Home() {
                 href={`/individual/${product.id}`}
                 className="rounded-2xl block"
               >
+                <div className="hover:scale-102 transition  hover:border-1 border-[#C5C4A6] rounded-2xl">
                 <div className="relative w-full h-80 mb-2 md:h-96 md:mb-4 rounded-2xl">
                   <Image
                     src={product.image?.url ?? "/default-image.jpg"}
@@ -166,9 +167,11 @@ export default function Home() {
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover rounded-2xl"
                   />
+                  
                 </div>
-                <p className="text-xl mb-2">{product.title}</p>
-                <p className="font-bold mb-10">{getDisplayPrice(product)}</p>
+                <p className="text-xl ml-2 ">{product.title}</p>
+                <p className="font-bold mb-10 ml-2">{getDisplayPrice(product)}</p>
+                </div>
               </Link>
             ))}
           </div>
