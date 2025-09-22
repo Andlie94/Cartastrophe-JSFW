@@ -133,26 +133,68 @@ export default function CheckoutPage() {
     }
   }, [values, saveInfo]);
 
-  const shipping = total >= FREE_SHIPPING_THRESHOLD || total === 0 ? 0 : FLAT_SHIPPING_RATE;
+  const shipping =
+    total >= FREE_SHIPPING_THRESHOLD || total === 0 ? 0 : FLAT_SHIPPING_RATE;
   const grandTotal = total + shipping;
 
   if (orderId) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <h1 className="text-3xl font-bold font-playfair mb-6">
-          🎉 Thank you for your order!
+        <div className="flex justify-center mb-8">
+          <div className="h-16 w-16 rounded-full border-2 border-[#C3C19E] flex items-center justify-center">
+            <span className="text-3xl text-[#C3C19E]">✓</span>
+          </div>
+        </div>
+
+        <h1 className="text-3xl font-bold font-playfair mb-4">
+          Order Confirmed!
         </h1>
-        <p className="mb-4 text-lg">
-          Your order <span className="font-mono font-semibold">#{orderId}</span> has been placed successfully.
+        <p className="text-gray-700 mb-2">
+          Thank you for shopping at{" "}
+          <span className="font-semibold">Cartastrophe</span> – we’re as excited
+          as you are (maybe even more).
         </p>
-        <p className="text-gray-600 mb-8">
-          We’re processing your order and will send you an update when it ships.
+        <p className="text-gray-700 mb-6">
+          Your order <span className="font-mono font-semibold">#{orderId}</span>{" "}
+          has been successfully placed. <br />
+          You’ll receive a confirmation email shortly with all the details.
         </p>
+
+        <hr className="my-8 border-gray-200" />
+
+        <div className="text-left space-y-6 mb-10">
+          <div>
+            <h2 className="font-semibold text-lg mb-1">
+              📦 Processing your order:
+            </h2>
+            <p className="text-gray-600">
+              We’re packing your items with care – and just a little bit of
+              judgment. Expect dispatch within 1–2 business days.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-semibold text-lg mb-1">🚚 Shipping time:</h2>
+            <p className="text-gray-600">
+              Depending on your location, your order will arrive in 3–7 business
+              days. You’ll receive a tracking number as soon as it’s on the
+              move.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-semibold text-lg mb-1">💬 Need help?</h2>
+            <p className="text-gray-600">
+              If you have questions, contact us anytime at the contact page.
+            </p>
+          </div>
+        </div>
+
         <Link
           href="/"
           className="inline-block px-6 py-3 rounded-md bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
         >
-          Continue shopping
+          CONTINUE SHOPPING
         </Link>
       </main>
     );
@@ -162,7 +204,9 @@ export default function CheckoutPage() {
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
       <section>
         <h1 className="text-3xl font-bold font-playfair mb-8">Checkout</h1>
-        <p className="mb-6 font-medium">Please fill out your contact information</p>
+        <p className="mb-6 font-medium">
+          Please fill out your contact information
+        </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -176,30 +220,40 @@ export default function CheckoutPage() {
               }`}
               disabled={isPlacingOrder}
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
-          <h2 className="text-2xl font-bold font-playfair mt-10">Shipping Address</h2>
+          <h2 className="text-2xl font-bold font-playfair mt-10">
+            Shipping Address
+          </h2>
 
-          {(["fullName", "address", "city", "country", "postalCode"] as (keyof FormValues)[]).map(
-            (field) => (
-              <div key={field}>
-                <label className="block mb-2 capitalize">{field}</label>
-                <input
-                  type="text"
-                  value={values[field]}
-                  onChange={(e) => handleChange(e, field)}
-                  className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
-                    errors[field] ? "border-red-500" : "border-gray-300"
-                  }`}
-                  disabled={isPlacingOrder}
-                />
-                {errors[field] && (
-                  <p className="text-red-600 text-sm mt-1">{errors[field]}</p>
-                )}
-              </div>
-            )
-          )}
+          {(
+            [
+              "fullName",
+              "address",
+              "city",
+              "country",
+              "postalCode",
+            ] as (keyof FormValues)[]
+          ).map((field) => (
+            <div key={field}>
+              <label className="block mb-2 capitalize">{field}</label>
+              <input
+                type="text"
+                value={values[field]}
+                onChange={(e) => handleChange(e, field)}
+                className={`w-full border p-3 rounded-md bg-[#f9f7f2] ${
+                  errors[field] ? "border-red-500" : "border-gray-300"
+                }`}
+                disabled={isPlacingOrder}
+              />
+              {errors[field] && (
+                <p className="text-red-600 text-sm mt-1">{errors[field]}</p>
+              )}
+            </div>
+          ))}
 
           <label className="flex items-center gap-2">
             <input
@@ -325,7 +379,9 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Shipping</span>
-                <span>{shipping === 0 ? "Free" : formatCurrency(shipping)}</span>
+                <span>
+                  {shipping === 0 ? "Free" : formatCurrency(shipping)}
+                </span>
               </div>
               <div className="flex justify-between border-t pt-4 text-lg font-semibold">
                 <span>Total</span>
