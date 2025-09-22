@@ -160,7 +160,6 @@ export default function CheckoutPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12">
-      {/* --- FORM --- */}
       <section>
         <h1 className="text-3xl font-bold font-playfair mb-8">Checkout</h1>
         <p className="mb-6 font-medium">Please fill out your contact information</p>
@@ -215,7 +214,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={!isFormValid || isPlacingOrder}
-            className={`mt-6 py-3 px-6 rounded-md transition block mx-auto ${
+            className={`w-full sm:w-auto mt-6 py-3 px-6 rounded-md transition block mx-auto ${
               isFormValid && !isPlacingOrder
                 ? "bg-[#C3C19E] text-white hover:bg-[#b5b38f]"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -226,8 +225,7 @@ export default function CheckoutPage() {
         </form>
       </section>
 
-      {/* --- ORDER SUMMARY --- */}
-      <section>
+      <section className="md:sticky md:top-24 self-start">
         <h2 className="text-2xl font-bold font-playfair mb-6">Order Summary</h2>
 
         {items === undefined ? (
