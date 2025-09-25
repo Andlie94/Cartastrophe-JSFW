@@ -97,7 +97,7 @@ export default function Home() {
             height={500}
             alt="picture of a black watch with a colorful image"
           />
-          <h2 className="absolute top-15 left-10 text-2xl md:top-30 md:left-70 text-amber-300 text-3xl font-bold">
+          <h2 className="absolute top-15 left-10 text-2xl md:top-30 md:left-70 text-amber-300 font-bold">
             New arrivals
           </h2>
           <p className="absolute text-[#C5C4A6] text-l top-25 left-8 md:top-40 md:left-70">
