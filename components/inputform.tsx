@@ -36,7 +36,7 @@ export function ContactFields({
           id="name"
           value={name}
           onChange={(e) => onChange("name", e.target.value)}
-          className={`mt-1 block w-full border rounded-md p-2 ${
+          className={`mt-1 block w-full border rounded-md p-2 bg-white inner-shadow ${
             errors.name ? "border-red-500" : "border-gray-300"
           }`}
         />
@@ -54,7 +54,7 @@ export function ContactFields({
           id="email"
           value={email}
           onChange={(e) => onChange("email", e.target.value)}
-          className={`mt-1 block w-full border rounded-md p-2 ${
+          className={`mt-1 block w-full border rounded-md p-2 bg-white inner-shadow ${
             errors.email ? "border-red-500" : "border-gray-300"
           }`}
         />
@@ -73,7 +73,7 @@ export function ContactFields({
           id="subject"
           value={subject}
           onChange={(e) => onChange("subject", e.target.value)}
-          className={`mt-1 block w-full border rounded-md p-2 ${
+          className={`mt-1 block w-full border rounded-md p-2 bg-white inner-shadow ${
             errors.subject ? "border-red-500" : "border-gray-300"
           }`}
         />
@@ -94,7 +94,7 @@ export function ContactFields({
           rows={4}
           value={message}
           onChange={(e) => onChange("message", e.target.value)}
-          className={`mt-1 block w-full border rounded-md p-2 ${
+          className={`mt-1 block w-full border rounded-md p-2 bg-white inner-shadow ${
             errors.message ? "border-red-500" : "border-gray-300"
           }`}
         />
