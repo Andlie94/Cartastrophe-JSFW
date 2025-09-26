@@ -1,7 +1,9 @@
-# 🛒 Cartastrophe – Oops, I Bought It Again
+# 🛍️ Cartastrophe – Oops, I Bought It Again
 
-Cartastrophe is a modern e-commerce front-end built with **Next.js 15, React, and TypeScript**.  
-It was created as part of the JavaScript Frameworks course at Noroff, and the goal was to design and implement a **fully functional checkout experience** using real product data from the Noroff API.  
+Cartastrophe is a modern e-commerce demo app built with **Next.js, React, TypeScript, and Tailwind CSS**.  
+It allows users to browse products, add them to a cart, and go through a full checkout flow.
+
+---
 
 The app is deployed here: [Cartastrophe on Netlify](https://cartastrophe.netlify.app/)  
 
@@ -29,31 +31,9 @@ The app is deployed here: [Cartastrophe on Netlify](https://cartastrophe.netlify
 
 ---
 
-## 👩‍💻 Contributors  
+## 🚀 Getting Started
 
-This project was a group effort, where everyone contributed to building different parts:  
-
-- **Anniken**  
-  - Checkout page structure and layout.  
-  - Form validation (email, name, address, postal code).  
-  - LocalStorage persistence for form data.  
-  - Order summary with quantity controls, line totals, and responsive tweaks.  
-  - Shipping logic (free vs flat rate).  
-  - Place order flow with success screen.   
-
-- **Tonje**
-   
-
-- **André**
-    
-
-Together, we iterated on GitHub issues to ensure each part of the project met the requirements.  
-
----
-
-## 🚀 Getting Started  
-
-Clone the repository:  
+### 1. Clone the repository
 ```bash
 git clone https://github.com/Andlie94/Cartastrophe-JSFW.git
 cd Cartastrophe-JSFW
@@ -69,6 +49,13 @@ Run development server:
 npm run dev
 ```
 The app should now be running at http://localhost:3000.
+
+### 📦 Build for production
+
+```bash
+npm run build
+npm start
+```
 
 ---
 
