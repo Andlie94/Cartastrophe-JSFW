@@ -1,16 +1,15 @@
 # 🛍️ Cartastrophe – Oops, I Bought It Again
 
-Cartastrophe is a modern e-commerce demo app built with **Next.js, React, TypeScript, and Tailwind CSS**.  
-It allows users to browse products, add them to a cart, and go through a full checkout flow.
+Cartastrophe is a modern e-commerce demo app built with Next.js, React, TypeScript, and Tailwind CSS.  
+It allows users to browse products, add them to a cart, and go through a full checkout flow.  
+
+The app is deployed here: **Cartastrophe on Netlify**
 
 ---
 
-The app is deployed here: [Cartastrophe on Netlify](https://cartastrophe.netlify.app/)  
-
----
-
-## ✨ Features  
-
+## ✨ Features
+- Browse products, click to view details, and add them to the cart.  
+- Search products by keyword and filter based on price.  
 - Checkout form with full validation (email, name, address, postal code, etc.).  
 - Option to save customer info for next time (via localStorage).  
 - Order summary with items, quantity controls, remove button, and live totals.  
@@ -21,8 +20,7 @@ The app is deployed here: [Cartastrophe on Netlify](https://cartastrophe.netlify
 
 ---
 
-## 🛠️ Tech Stack  
-
+## 🛠️ Tech Stack
 - **Framework:** Next.js 15 (React + TypeScript, App Router)  
 - **Styling:** Tailwind CSS  
 - **State Management:** React Context (`cartContext.tsx`)  
@@ -56,15 +54,6 @@ The app should now be running at http://localhost:3000.
 npm run build
 npm start
 ```
-
----
-
-## 🔮 Future Improvements
-- Implement promo codes and discounts.  
-- Persist cart across sessions using localStorage or Supabase.  
-- User accounts and login flow.  
-- Unit tests for cart reducers, price math, and snapshot states.  
-- Polish UI animations and transitions.  
 
 ---
 
