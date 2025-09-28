@@ -2,13 +2,8 @@ import React from "react";
 import { getProductById } from "@/components/fetch";
 import Image from "next/image";
 import AddToCartButton from "@/components/AddToCartButton";
-
+import ReviewCarousel from "@/components/ReviewCarousel";
 export const dynamic = "force-static";
-
-function Stars({ rating }: { rating: number }) {
-  const r = Math.max(0, Math.min(5, rating ?? 0));
-  return <span className="text-yellow-500 text-base sm:text-lg">{"★".repeat(r)}{"☆".repeat(5 - r)}</span>;
-}
 
 type Review = {
   username: string;
@@ -17,11 +12,13 @@ type Review = {
 };
 
 export default async function IndividualPage(
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   const { id } = await params;
   const product = await getProductById(id);
-  if (!product) return <div className="px-4 py-12 text-center">Fant ikke produkt</div>;
+  if (!product) {
+    return <div className="px-4 py-12 text-center">Fant ikke produkt</div>;
+  }
 
   const reviews: Review[] = product.reviews ?? [];
 
@@ -29,6 +26,7 @@ export default async function IndividualPage(
     <>
       <main className="mx-auto w-full max-w-6xl px-4 sm:px-6 pt-8 md:pt-16 pb-24 md:pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+          {/* Bilde */}
           <div className="relative w-full max-w-md mx-auto aspect-[4/3] sm:aspect-square">
             {product.image?.url && (
               <Image
@@ -46,29 +44,22 @@ export default async function IndividualPage(
             <h1 className="text-2xl sm:text-3xl font-bold break-words">{product.title}</h1>
             <div className="text-lg sm:text-xl font-semibold">{product.price} USD</div>
             {product.description && (
-              <p className="text-sm sm:text-base leading-relaxed text-gray-700">{product.description}</p>
+              <p className="text-sm sm:text-base leading-relaxed text-gray-700">
+                {product.description}
+              </p>
             )}
-            <AddToCartButton id={product.id} title={product.title} price={product.price} image={product.image} />
+            <AddToCartButton
+              id={product.id}
+              title={product.title}
+              price={product.price}
+              image={product.image}
+            />
           </div>
         </div>
 
         <section className="mt-12 md:mt-16 max-w-2xl mx-auto md:mx-0">
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Reviews</h2>
-          {reviews.length > 0 ? (
-            <div className="space-y-4 md:space-y-6">
-              {reviews.map((review: Review, i: number) => (
-                <div key={i} className="border rounded-lg shadow-sm bg-white p-4 sm:p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                    <p className="font-bold text-sm sm:text-base">{review.username}</p>
-                    <Stars rating={review.rating ?? 0} />
-                  </div>
-                  {review.description && <p className="text-sm md:text-base text-gray-700">{review.description}</p>}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center md:text-left">No reviews yet for this product.</p>
-          )}
+          <ReviewCarousel reviews={reviews} />
         </section>
       </main>
 
