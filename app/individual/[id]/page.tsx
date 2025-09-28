@@ -58,6 +58,7 @@ export default async function IndividualPage({
               title={product.title}
               price={product.price}
               image={product.image}
+              className="hidden md:flex"
             />
           </div>
         </div>
