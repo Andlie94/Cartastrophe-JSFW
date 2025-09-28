@@ -40,6 +40,7 @@ export default function ReviewCarousel({
  
   useEffect(() => {
     if (!hasReviews || total < 2) return;
+  
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
