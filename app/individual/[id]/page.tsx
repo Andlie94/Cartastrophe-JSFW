@@ -12,6 +12,8 @@ type Review = {
   description?: string;
 };
 
+const fmt = (n: number) => `${Number(n).toFixed(2)} USD`;
+
 export default async function IndividualPage({
   params,
 }: {
@@ -21,6 +23,13 @@ export default async function IndividualPage({
   if (!product) {
     return <div className="px-4 py-12 text-center">Fant ikke produkt</div>;
   }
+
+  const hasDiscount =
+    typeof product.discountedPrice === "number" &&
+    product.discountedPrice! > 0 &&
+    product.discountedPrice! < product.price;
+
+  const effectivePrice: number = hasDiscount ? product.discountedPrice! : product.price;
 
   const reviews: Review[] = product.reviews ?? [];
 
@@ -45,18 +54,28 @@ export default async function IndividualPage({
             <h1 className="text-2xl sm:text-3xl font-bold break-words">
               {product.title}
             </h1>
-            <div className="text-lg sm:text-xl font-semibold">
-              {product.price} USD
+
+            <div className="flex items-baseline gap-3">
+              <span className="text-lg sm:text-xl font-semibold">
+                {fmt(effectivePrice)}
+              </span>
+              {hasDiscount && (
+                <span className="text-gray-500 line-through text-sm sm:text-base">
+                  {fmt(product.price)}
+                </span>
+              )}
             </div>
+
             {product.description && (
               <p className="text-sm sm:text-base leading-relaxed text-gray-700">
                 {product.description}
               </p>
             )}
+
             <AddToCartButton
               id={product.id}
               title={product.title}
-              price={product.price}
+              price={effectivePrice}           
               image={product.image}
               className="hidden md:flex"
             />
@@ -69,16 +88,24 @@ export default async function IndividualPage({
         </section>
       </main>
 
+
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/90 backdrop-blur border-t">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
           <div className="flex-1">
             <div className="text-sm text-gray-600">Price</div>
-            <div className="text-lg font-semibold">{product.price} USD</div>
+            <div className="flex items-baseline gap-2">
+              <div className="text-lg font-semibold">{fmt(effectivePrice)}</div>
+              {hasDiscount && (
+                <div className="text-gray-500 line-through text-xs">
+                  {fmt(product.price)}
+                </div>
+              )}
+            </div>
           </div>
           <AddToCartButton
             id={product.id}
             title={product.title}
-            price={product.price}
+            price={effectivePrice}            
             image={product.image}
             className="flex-[2] h-12 w-full"
             openCartOnAdd={true}
