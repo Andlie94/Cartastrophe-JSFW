@@ -5,6 +5,9 @@ It allows users to browse products, add them to a cart, and go through a full ch
 
 The app is deployed here: **Cartastrophe on Netlify**
 
+## Improvment
+Removed the rounded corners from the hero image on the homepage in the JavaScript Frameworks project.
+
 ---
 
 ## ✨ Features
