@@ -93,7 +93,7 @@ export default function ProductsPage({
       </Suspense>
 
       <div>
-        <div className="relative w-full h-[400px] rounded-xl overflow-hidden mb-4">
+        <div className="relative w-full h-[400px] overflow-hidden mb-4">
           <Image
             src="https://images.unsplash.com/photo-1579143074908-5aaac893d0fe?q=80&w=2070&auto=format&fit=crop"
             className="w-full md:h-full object-cover"
