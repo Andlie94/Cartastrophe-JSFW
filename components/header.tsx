@@ -90,8 +90,9 @@ export default function Header() {
 
           <div className="flex items-center gap-3 justify-end">
             <div className="hidden md:block">
-              <Suspense />
+              <Suspense>
                 <SearchButton />
+              </Suspense>
             </div>
 
             <button className="relative p-2" aria-label="Toggle cart" onClick={toggleCart}>
@@ -117,8 +118,9 @@ export default function Header() {
         {open && (
           <div className="md:hidden border-t">
             <div className="w-full px-4 py-3 flex flex-col gap-4">
-              <Suspense />
+              <Suspense>
                 <SearchButton />
+              </Suspense>
               <nav className="flex flex-col gap-3">
                 <Link href="/" onClick={() => setOpen(false)} className="py-1">Home</Link>
                 <Link href="/contact" onClick={() => setOpen(false)} className="py-1">Contact</Link>
