@@ -2,7 +2,7 @@ import { FaFacebook, FaInstagram, FaLinkedin  } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bottom-0 w-full p-4 text-sm text-black text-center font-light bg-[#F4F4ED]">
+    <footer className="w-full p-4 text-sm text-black text-center font-light bg-[#F4F4ED]">
       <div className="flex flex-col md:flex-row items-center">
         <div className="flex-1">
       <p>Because one more won’t hurt… probably.</p>

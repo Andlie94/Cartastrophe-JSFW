@@ -6,7 +6,6 @@ import { Footer } from "../components/footer";
 import { CartProvider } from "../app/context/cartContext";
 import { ToastProvider } from "@/components/Toast";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,11 +31,13 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F5F3EE]`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F5F3EE] flex flex-col min-h-screen`}
+      >
         <ToastProvider>
           <CartProvider>
             <Header />
-            {children}
+            <main className="flex-1">{children}</main>
             <Footer />
           </CartProvider>
         </ToastProvider>
