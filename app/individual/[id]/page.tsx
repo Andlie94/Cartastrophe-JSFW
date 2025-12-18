@@ -17,11 +17,12 @@ const fmt = (n: number) => `${Number(n).toFixed(2)} USD`;
 export default async function IndividualPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const product = await getProductById(params.id);
+  const { id } = await params;
+  const product = await getProductById(id);
   if (!product) {
-    return <div className="px-4 py-12 text-center">Fant ikke produkt</div>;
+    return <div className="px-4 py-12 text-center"><p>Did not find product</p></div>;
   }
 
   const hasDiscount =
@@ -29,7 +30,9 @@ export default async function IndividualPage({
     product.discountedPrice! > 0 &&
     product.discountedPrice! < product.price;
 
-  const effectivePrice: number = hasDiscount ? product.discountedPrice! : product.price;
+  const effectivePrice: number = hasDiscount
+    ? product.discountedPrice!
+    : product.price;
 
   const reviews: Review[] = product.reviews ?? [];
 
@@ -75,7 +78,7 @@ export default async function IndividualPage({
             <AddToCartButton
               id={product.id}
               title={product.title}
-              price={effectivePrice}           
+              price={effectivePrice}
               image={product.image}
               className="hidden md:flex"
             />
@@ -87,7 +90,6 @@ export default async function IndividualPage({
           <ReviewCarousel reviews={reviews} />
         </section>
       </main>
-
 
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/90 backdrop-blur border-t">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
@@ -105,7 +107,7 @@ export default async function IndividualPage({
           <AddToCartButton
             id={product.id}
             title={product.title}
-            price={effectivePrice}            
+            price={effectivePrice}
             image={product.image}
             className="flex-[2] h-12 w-full"
             openCartOnAdd={true}

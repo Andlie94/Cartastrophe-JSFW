@@ -8,7 +8,6 @@ export default function CartDropdown() {
   const { items, total, increase, decrease, remove, clear, toggleCart } = useCart();
   const ref = useRef<HTMLDivElement>(null);
 
-
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (!ref.current?.contains(e.target as Node)) toggleCart();
