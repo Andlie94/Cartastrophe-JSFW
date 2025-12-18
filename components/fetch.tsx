@@ -2,7 +2,7 @@
 export const getProducts = async () => {
   try {
     const res = await fetch("https://v2.api.noroff.dev/online-shop", {
-      cache: "no-store",
+      next: { revalidate: 3600 },
     });
     if (!res.ok) throw new Error("Failed to fetch products");
 
@@ -16,7 +16,7 @@ export const getProducts = async () => {
 
 export const getProductById = async (id: string) => {
   try {
-    const res = await fetch(`https://v2.api.noroff.dev/online-shop/${id}`, { cache: "no-store" });
+    const res = await fetch(`https://v2.api.noroff.dev/online-shop/${id}`, { next: { revalidate: 3600 } });
     if (!res.ok) throw new Error("Failed to fetch product");
     const json = await res.json();
     return json.data;
