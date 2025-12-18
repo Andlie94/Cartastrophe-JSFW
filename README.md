@@ -9,9 +9,8 @@ The app is deployed here: **Cartastrophe on Netlify**
 Removed the rounded corners from the hero image on the homepage in the JavaScript Frameworks project.
 (Tonje)
 
-fixed components so the text is correctly placed inside the component instead of using a self-closing tag
-fix footer so it allways on the bottom.
-fix link in not-found page so it send the user back to ladning page, the link was brooke before
+fixed removed som doble spacing added associated controls for labels on the cart page removed sonsole.log. 
+Fixed so so the user show again. was some issue after update the project to next.16
 (Andlie94)
 
 ---
