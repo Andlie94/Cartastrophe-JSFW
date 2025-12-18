@@ -17,7 +17,6 @@ type FormValues = {
 type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 const STORAGE_KEY = "checkoutForm";
-
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -210,8 +209,11 @@ export default function CheckoutPage() {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label className="block mb-2">Email</label>
+            <label htmlFor="email" className="block mb-2">
+              Email
+            </label>
             <input
+              id="email"
               type="email"
               value={values.email}
               onChange={(e) => handleChange(e, "email")}
@@ -239,8 +241,11 @@ export default function CheckoutPage() {
             ] as (keyof FormValues)[]
           ).map((field) => (
             <div key={field}>
-              <label className="block mb-2 capitalize">{field}</label>
+              <label htmlFor={field} className="block mb-2 capitalize">
+                {field}
+              </label>
               <input
+                id={field}
                 type="text"
                 value={values[field]}
                 onChange={(e) => handleChange(e, field)}

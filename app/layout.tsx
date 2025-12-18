@@ -6,7 +6,6 @@ import { Footer } from "../components/footer";
 import { CartProvider } from "../app/context/cartContext";
 import { ToastProvider } from "@/components/Toast";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

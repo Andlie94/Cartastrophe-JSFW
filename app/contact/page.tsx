@@ -46,7 +46,6 @@ export default function ContactPage() {
     setIsSubmitted(false);
   };
 
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const { name, email, subject, message } = formData;
@@ -58,13 +57,10 @@ export default function ContactPage() {
 
     if (nameError || emailError || subjectError || messageError) return;
 
-    console.log(formData);
-
     setFormData({ name: "", email: "", subject: "", message: "" });
     setErrors({ name: "", email: "", subject: "", message: "" });
     setIsSubmitted(true);
   };
-
 
   return (
     <div className="max-w-md mx-auto p-8 rounded">
